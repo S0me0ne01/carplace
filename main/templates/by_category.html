@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>CarPlace</title>
+<meta name="description" content="Лучшее, что может быть.">
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load thumbnail %}
+
+<!--Main layout-->
+<main class="my-5">
+  <div class="container">
+    <section class="text-center">
+      {% if language == 'kz' %}
+          {% if kind == 'products' %}
+          <h4 class="mb-4"><strong>{{ category.name_kz }} санаттағы тауарлар</strong></h4><hr/><br/>
+          {% elif kind == 'services' %}
+          <h4 class="mb-4"><strong>{{ category.name_kz }} санатындағы қызметтер</strong></h4><hr/><br/>
+          {% endif %}
+      {% else %}
+          {% if kind == 'products' %}
+          <h4 class="mb-4"><strong>Товары категории {{ category.name }}</strong></h4><hr/><br/>
+          {% elif kind == 'services' %}
+          <h4 class="mb-4"><strong>Услуги категории {{ category.name }}</strong></h4><hr/><br/>
+          {% endif %}
+      {% endif %}
+
+      <div class="row">
+
+      <!-- OFFERS -->
+      {% for object in objects %}
+        <div class="col-lg-4 col-md-12 mb-4">
+          <div class="card">
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+              <img src="{{ object.image|thumbnail_url:'main' }}" class="img-fluid" />
+              <a href="{% url 'main:detail' kind object.pk %}">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </a>
+            </div>
+            <div class="card-body">
+              {% if language == 'kz' and object.name_kz and object.description_kz and object.category.name_kz %}
+                  <h4 class="card-title"><a href="{% url 'main:detail' kind object.pk %}">{{ object.name_kz }}</a></h4><hr/>
+                  <h5 class="card-text">{{ object.category.name_kz }}</h5><hr/>
+                  <h5 class="card-text">{{ object.description_kz|truncatewords:50 }}</h5><hr/>
+              {% else %}
+                  <h4 class="card-title"><a href="{% url 'main:detail' kind object.pk %}">{{ object.name }}</a></h4><hr/>
+                  <h5 class="card-text">{{ object.category.name }}</h5><hr/>
+                  <h5 class="card-text">{{ object.description|truncatewords:50 }}</h5><hr/>
+              {% endif %}
+              <h5 class="card-text">{{ object.price }}₸</h5><hr/>
+              {% if language == 'kz' %}
+                  {% if object.in_stock == True %}
+                  <h5 class="mb-4">Қоймада бар</h5>
+                  {% elif object.in_stock == False %}
+                  <h5 class="mb-4">Қоймада жоқ</h5>
+                  {% endif %}
+                  {% if object.duration %}
+                  <h5 class="mb-4">Жұмыс уақыты: {{ object.duration }} мин.</h5>
+                  {% endif %}
+                  <a href="{% url 'main:detail' kind object.pk %}" class="btn btn-primary">Толығырақ</a>
+              {% else %}
+                  {% if object.in_stock == True %}
+                  <h5 class="mb-4">Есть в наличии</h5>
+                  {% elif object.in_stock == False %}
+                  <h5 class="mb-4">Нет в наличии</h5>
+                  {% endif %}
+                  {% if object.duration %}
+                  <h5 class="mb-4">Время выполнения: {{ object.duration }} мин.</h5>
+                  {% endif %}
+                  <a href="{% url 'main:detail' kind object.pk %}" class="btn btn-primary">Подробнее</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+
+      <!-- Pagination -->
+      {% if kind == 'products' or kind == 'services' and page.has_other_pages %}
+      <nav class="my-4" aria-label="...">
+        <ul class="pagination pagination-circle justify-content-center">
+          {% if page.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page.previous_page_number }}" tabindex="-1" aria-disabled="true"><<</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">{{ page.previous_page_number }}</a></li>
+          {% endif %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?page={{ page.number }}">{{ page.number }}</a>
+          </li>
+          {% if page.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">{{ page.next_page_number }}</a></li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page.next_page_number }}">>></a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+  </div>
+</main>
+
+{% endblock %}

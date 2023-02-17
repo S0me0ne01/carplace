@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>CarPlace</title>
+<meta name="description" content="Лучшее, что может быть.">
+{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load thumbnail %}
+
+<!--Main layout-->
+<main class="my-5">
+  <div class="container">
+
+    <!-- Products -->
+    <section class="text-center">
+      {% if language == 'kz' and products %}
+      <h4 class="mb-4"><strong>Табылған тауарлар</strong></h4><hr/><br/>
+      {% elif language == 'kz' %}
+      <h4 class="mb-4"><strong>Тауарлар табылған жоқ</strong></h4><hr/><br/>
+      {% elif products %}
+      <h4 class="mb-4"><strong>Найденные товары</strong></h4><hr/><br/>
+      {% else %}
+      <h4 class="mb-4"><strong>Товары не найдены</strong></h4><hr/><br/>
+      {% endif %}
+
+      <div class="row">
+
+        {% for product in products %}
+        <div class="col-lg-4 col-md-12 mb-4">
+          <div class="card">
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+              <img src="{{ product.image|thumbnail_url:'main' }}" class="img-fluid" />
+              <a href="{% url 'main:detail' 'products' product.pk %}">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </a>
+            </div>
+            <div class="card-body">
+              {% if language == 'kz' and product.name_kz and product.description_kz %}
+                  <h4 class="card-title"><a href="{% url 'main:detail' 'products' product.pk %}">{{ product.name_kz }}</a></h4><hr/>
+                  <h5 class="card-text">{{ product.category.name_kz }}</h5><hr/>
+                  <h5 class="card-text">{{ product.description_kz|truncatewords:50 }}</h5><hr/>
+              {% else %}
+                  <h4 class="card-title"><a href="{% url 'main:detail' 'products' product.pk %}">{{ product.name }}</a></h4><hr/>
+                  <h5 class="card-text">{{ product.category.name }}</h5><hr/>
+                  <h5 class="card-text">{{ product.description|truncatewords:50 }}</h5><hr/>
+              {% endif %}
+              <h5 class="card-text">{{ product.price }}₸</h5><hr/>
+              {% if language == 'kz' %}
+                  {% if product.in_stock == True %}
+                  <h5 class="mb-4">Қоймада бар</h5>
+                  {% else %}
+                  <h5 class="mb-4">Қоймада жоқ</h5>
+                  {% endif %}
+                  <a href="{% url 'main:detail' 'products' product.pk %}" class="btn btn-primary">Толығырақ</a>
+              {% else %}
+                  {% if product.in_stock == True %}
+                  <h5 class="mb-4">Есть в наличии</h5>
+                  {% else %}
+                  <h5 class="mb-4">Нет в наличии</h5>
+                  {% endif %}
+                  <a href="{% url 'main:detail' 'products' product.pk %}" class="btn btn-primary">Подробнее</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+    </section>
+    <!-- Products -->
+
+    <br/>
+
+    <!-- Services -->
+    <section class="text-center">
+      {% if language == 'kz' and services %}
+      <h4 class="mb-4"><strong>Табылған қызметтер</strong></h4><hr/><br/>
+      {% elif language == 'kz' %}
+      <h4 class="mb-4"><strong>Қызметтер табылмады</strong></h4><hr/><br/>
+      {% elif services %}
+      <h4 class="mb-4"><strong>Найденные услуги</strong></h4><hr/><br/>
+      {% else %}
+      <h4 class="mb-4"><strong>Услуги не найдены</strong></h4><hr/><br/>
+      {% endif %}
+
+      <div class="row">
+
+        {% for service in services %}
+        <div class="col-lg-4 col-md-12 mb-4">
+          <div class="card">
+            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+              <img src="{{ service.image|thumbnail_url:'main' }}" class="img-fluid" />
+              <a href="{% url 'main:detail' 'services' service.pk %}">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </a>
+            </div>
+            <div class="card-body">
+              {% if language == 'kz' and service.name_kz and service.description_kz %}
+                  <h4 class="card-title"><a href="{% url 'main:detail' 'services' service.pk %}">{{ service.name_kz }}</a></h4><hr/>
+                  <h5 class="card-text">{{ service.category.name_kz }}</h5><hr/>
+                  <h5 class="card-text">{{ service.description_kz|truncatewords:50 }}</h5><hr/>
+              {% else %}
+                  <h4 class="card-title"><a href="{% url 'main:detail' 'services' service.pk %}">{{ service.name }}</a></h4><hr/>
+                  <h5 class="card-text">{{ service.category.name }}</h5><hr/>
+                  <h5 class="card-text">{{ service.description|truncatewords:50 }}</h5><hr/>
+              {% endif %}
+              <h5 class="card-text">{{ service.price }}₸</h5><hr/>
+              {% if language == 'kz' %}
+                  {% if service.duration %}
+                  <h5 class="mb-4">Жұмыс уақыты: {{ service.duration }} мин.</h5>
+                  {% endif %}
+                  <a href="{% url 'main:detail' 'services' service.pk %}" class="btn btn-primary">Толығырақ</a>
+              {% else %}
+                  {% if service.duration %}
+                  <h5 class="mb-4">Время выполнения: {{ service.duration }} мин.</h5>
+                  {% endif %}
+                  <a href="{% url 'main:detail' 'services' service.pk %}" class="btn btn-primary">Подробнее</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+    </section>
+    <!-- Services -->
+
+    <hr/>
+  </div>
+</main>
+
+{% endblock %}

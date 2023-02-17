@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>CarPlace | {{ object.name }}</title>
+<meta name="description" content="{{ object.name }} {{ object.description }}">
+{% endblock %}
+
+{% block content %}
+{% load thumbnail %}
+{% load static %}
+
+    <!-- DETAIL -->
+    <div class="album py-5 bg-light">
+       <div class="container">
+
+       <div class="row align-items-md-stretch">
+           <div class="col-md-6">
+                <img class="card-img-top p-4 bg-dark rounded-3 carousel slide" src="{{ object.image|thumbnail_url:'main' }}" alt="" />
+           </div>
+           <div class="col-md-6">
+             <div class="h-100 p-5 bg-light border rounded-3">
+
+             {% if language == 'kz' and object.name_kz and object.description_kz and object.category.name_kz %}
+                  <h1 class="display-4 font-weight-normal">{{ object.name_kz }}</h1>
+                  <hr/>
+                  <h3 class="display-6 font-weight-light">{{ object.price }}₸</h3>
+                  <hr/>
+                  <p class="lead font-weight-normal">{{ object.category.name_kz }}</p>
+                  <hr/>
+
+                  {% if object.in_stock %}
+                  {% if object.in_stock == True %}
+                  <p class="lead font-weight-normal">Қоймада бар</p>
+                  {% else %}
+                  <p class="lead font-weight-normal">Қоймада жоқ</p>
+                  {% endif %}
+                  {% endif %}
+
+                  {% if object.duration %}
+                  <p class="lead font-weight-normal">Жұмыс уақыты: {{ object.duration }} мин.</p>
+                  {% endif %}
+
+                  {% if request.user.is_staff %}
+                  <a class="btn btn-outline-secondary" href="{% url 'main:delete' kind object.pk %}">Жою</a>
+                  <a class="btn btn-outline-secondary" href="{% url 'main:edit' kind object.pk %}">Өзгерту</a>
+                  {% endif %}
+                  <hr/>
+             {% else %}
+                  <h1 class="display-4 font-weight-normal">{{ object.name }}</h1>
+                  <hr/>
+                  <h3 class="display-6 font-weight-light">{{ object.price }}₸</h3>
+                  <hr/>
+                  <p class="lead font-weight-normal">{{ object.category.name }}</p>
+                  <hr/>
+
+                  {% if object.in_stock %}
+                  {% if object.in_stock == True %}
+                  <p class="lead font-weight-normal">Есть в наличии</p>
+                  {% else %}
+                  <p class="lead font-weight-normal">Нет в наличии</p>
+                  {% endif %}
+                  {% endif %}
+
+                  {% if object.duration %}
+                  <p class="lead font-weight-normal">Время выполнения: {{ object.duration }}</p>
+                  {% endif %}
+
+                  {% if request.user.is_staff %}
+                  <a class="btn btn-outline-secondary" href="{% url 'main:delete' kind object.pk %}">Удалить</a>
+                  <a class="btn btn-outline-secondary" href="{% url 'main:edit' kind object.pk %}">Изменить</a>
+                  {% endif %}
+                  <hr/>
+             {% endif %}
+             </div>
+           </div>
+       </div>
+
+       </div>
+    </div>
+    <br/>
+
+    <div class="album py-5 bg-light">
+       <div class="container">
+
+          <div class="col-md">
+            <div class="h-100 p-5 bg-light border rounded-3">
+              {% if language == 'kz' and object.name_kz and object.description_kz %}
+                  <p class="lead font-weight-normal">{{ object.description_kz }}</p>
+              {% else %}
+                  <p class="lead font-weight-normal">{{ object.description }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+       </div>
+    </div>
+
+
+{% endblock %}

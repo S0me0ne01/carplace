@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+   <!-- ADD -->
+   <div class="album py-5 bg-light">
+     <div class="container text-center">
+          <h3>
+          {% if language == 'kz' %}
+          <a href="{% url 'main:add' 'products' %}" class="btn btn-primary">Элементті қосыңыз</a>
+          <a href="{% url 'main:add' 'services' %}" class="btn btn-primary">Қызметті қосу</a>
+          <a href="{% url 'main:add' 'p_categories' %}" class="btn btn-primary">Өнім санатын қосыңыз</a>
+          <a href="{% url 'main:add' 's_categories' %}" class="btn btn-primary">Қызметтер санатын қосыңыз</a>
+          {% else %}
+          <a href="{% url 'main:add' 'products' %}" class="btn btn-primary">Добавить товар</a>
+          <a href="{% url 'main:add' 'services' %}" class="btn btn-primary">Добавить услугу</a>
+          <a href="{% url 'main:add' 'p_categories' %}" class="btn btn-primary">Добавить категорию товара</a>
+          <a href="{% url 'main:add' 's_categories' %}" class="btn btn-primary">Добавить категорию услуг</a>
+          {% endif %}
+          </h3>
+      </div>
+    </div>
+
+{% endblock %}

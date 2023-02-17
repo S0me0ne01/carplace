@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+   <!-- ALL -->
+   <div class="album py-5 bg-light">
+     <div class="container text-center">
+          <h3>
+          {% if language == 'kz' %}
+          <a href="{% url 'main:all' 'products' %}" class="btn btn-primary">Тауарлар</a>
+          <a href="{% url 'main:all' 'services' %}" class="btn btn-primary">Қызметтер</a>
+          <a href="{% url 'main:all' 'p_categories' %}" class="btn btn-primary">Санаттар</a>
+          {% else %}
+          <a href="{% url 'main:all' 'products' %}" class="btn btn-primary">Товары</a>
+          <a href="{% url 'main:all' 'services' %}" class="btn btn-primary">Услуги</a>
+          <a href="{% url 'main:all' 'p_categories' %}" class="btn btn-primary">Категории</a>
+          {% endif %}
+          </h3>
+      </div>
+    </div>
+
+{% endblock %}

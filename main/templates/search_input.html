@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>CarPlace | Поиск</title>
+<meta name="description" content="Поиск">
+{% endblock %}
+
+{% block content %}
+
+   <!-- SEARCH_INPUT -->
+   <div class="album py-5 bg-light">
+     <div class="container">
+        <br/>
+
+        {% if language == 'kz' %}
+        <h2>Іздеу</h2>
+        {% else %}
+        <h2>Поиск</h2>
+        {% endif %}
+
+        {% load crispy_forms_tags %}
+
+        <form class="searchform" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <br/>
+            {% if language == 'kz' %}
+            <input type="submit" class="btn btn-lg btn-primary", value="Іздеу">
+            {% else %}
+            <input type="submit" class="btn btn-lg btn-primary", value="Искать">
+            {% endif %}
+        </form>
+      </div>
+    </div>
+
+{% endblock %}

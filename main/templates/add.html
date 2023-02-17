@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+   <!-- ADD -->
+   <div class="album py-5 bg-light">
+     <div class="container">
+          <br/>
+          {% if language == 'kz' %}
+          <h2>Қосу</h2>
+          {% else %}
+          <h2>Добавить</h2>
+          {% endif %}
+          <br/>
+
+          {% load crispy_forms_tags %}
+
+          <form class="searchform" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <br/>
+              {% if language == 'kz' %}
+              <input type="submit" class="btn btn-lg btn-primary", value="Қосу">
+              {% else %}
+              <input type="submit" class="btn btn-lg btn-primary", value="Добавить">
+              {% endif %}
+          </form>
+      </div>
+    </div>
+
+{% endblock %}
