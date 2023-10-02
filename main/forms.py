@@ -11,19 +11,21 @@ from django.core.validators import FileExtensionValidator
 class ProductCategoryForm(forms.ModelForm):
 	name = forms.CharField(label = 'Название на русском')
 	name_kz = forms.CharField(label = 'Название на казахском')
+	image = forms.ImageField(label = 'Изображение', validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'jpeg'))], error_messages={'invalid_extension' : 'Этот формат не поддерживается', 'required' : ''}, required = True)
 
 	class Meta:
 		model = ProductCategory
-		fields = ('name', 'name_kz',)
+		fields = ('name', 'name_kz', 'image',)
 
 
 class ServiceCategoryForm(forms.ModelForm):
 	name = forms.CharField(label = 'Название на русском')
 	name_kz = forms.CharField(label = 'Название на казахском')
+	image = forms.ImageField(label = 'Изображение', validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'jpeg'))], error_messages={'invalid_extension' : 'Этот формат не поддерживается', 'required' : ''}, required = True)
 
 	class Meta:
 		model = ServiceCategory
-		fields = ('name', 'name_kz',)
+		fields = ('name', 'name_kz', 'image',)
 
 
 class ProductForm(forms.ModelForm):
@@ -32,13 +34,12 @@ class ProductForm(forms.ModelForm):
 	name_kz = forms.CharField(label = 'Название на казахском')
 	description = forms.CharField(label = 'Описание на русском', widget=forms.widgets.Textarea())
 	description_kz = forms.CharField(label = 'Описание на казахском', widget=forms.widgets.Textarea())
-	image = forms.ImageField(label = 'Изображение', validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'jpeg'))], error_messages={'invalid_extension' : 'Этот формат не поддерживается', 'required' : ''}, required = True)
 	price = forms.IntegerField(label = 'Цена')
 	in_stock = forms.BooleanField(label = 'Есть в наличии')
 
 	class Meta:
 		model = Product
-		fields = ('category', 'name', 'name_kz', 'description', 'description_kz', 'image', 'price', 'in_stock',)
+		fields = ('category', 'name', 'name_kz', 'description', 'description_kz', 'price', 'in_stock',)
 
 
 class ServiceForm(forms.ModelForm):

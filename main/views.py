@@ -17,16 +17,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponseForbidden, HttpResponse, HttpResponseNotFound, Http404
 from django.urls import reverse
 
+from django.template import RequestContext
+
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 
 
 def homepage(request):
-    telegram_bot_sendtext('hello')
-    language = request.session.get('language')
-    if not language:
-        request.session['language'] = 'ru'
-
     p_categories = ProductCategory.objects.all()
     s_categories = ServiceCategory.objects.all()
 
@@ -44,27 +41,34 @@ def homepage(request):
     except Ip.DoesNotExist:
         Ip.objects.create(adress = adress, year = str(datetime.datetime.now().year), month = str(datetime.datetime.now().month))
 
+    language = request.COOKIES.get('language')
+    if not language:
+        language = 'ru'
+
     context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'products' : products, 'services' : services}
-    return render(request, 'homepage.html', context)
+    response = render(request, 'homepage.html', context)
+    response.set_cookie('language', language)
+    return response
 
 
 def all(request, kind):
-    language = request.session.get('language')
-    if not language:
-        request.session['language'] = 'ru'
-
     p_categories = ProductCategory.objects.all()
     s_categories = ServiceCategory.objects.all()
+
+    language = request.COOKIES.get('language')
+    if not language:
+        language = 'ru'
 
     if kind == 'products':
         objects = Product.objects.order_by('-published')
     elif kind == 'services':
         objects = Service.objects.order_by('-published')
     elif kind == 'p_categories' or kind == 's_categories':
-        pass
+        template = 'all.html'
+        context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'kind' : kind}
     else:
         context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories}
-        return render(request, 'all_choose.html', context)
+        template = 'all_choose.html'
 
     if kind == 'products' or kind == 'services':
         paginator = Paginator(objects, 6)
@@ -74,19 +78,21 @@ def all(request, kind):
             page_num = 1
         page = paginator.get_page(page_num)
         context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'kind' : kind, 'objects' : page.object_list, 'page' : page}
-        return render(request, 'all.html', context)
+        template = 'all.html'
 
-    context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'kind' : kind}
-    return render(request, 'all.html', context)
+
+    response = render(request, template, context)
+    response.set_cookie('language', language)
+    return response
 
 
 def by_category(request, kind, category_id):
-    language = request.session.get('language')
-    if not language:
-        request.session['language'] = 'ru'
-
     p_categories = ProductCategory.objects.all()
     s_categories = ServiceCategory.objects.all()
+
+    language = request.COOKIES.get('language')
+    if not language:
+        language = 'ru'
 
     if kind == 'products':
         category = get_object_or_404(ProductCategory, id = category_id)
@@ -105,17 +111,19 @@ def by_category(request, kind, category_id):
     page = paginator.get_page(page_num)
 
     context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'category' : category, 'kind' : kind, 'objects' : page.object_list, 'page' : page}
-    return render(request, 'by_category.html', context)
+    response = render(request, 'by_category.html', context)
+    response.set_cookie('language', language)
+    return response
 
 
 
 def detail(request, kind, object_id):
-    language = request.session.get('language')
-    if not language:
-        request.session['language'] = 'ru'
-
     p_categories = ProductCategory.objects.all()
     s_categories = ServiceCategory.objects.all()
+
+    language = request.COOKIES.get('language')
+    if not language:
+        language = 'ru'
 
     if kind == 'services':
         object = get_object_or_404(Service, id = object_id)
@@ -123,17 +131,19 @@ def detail(request, kind, object_id):
         object = get_object_or_404(Product, id = object_id)
 
     context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'object' : object, 'kind' : kind}
-    return render(request, 'detail.html', context)
+    response = render(request, 'detail.html', context)
+    response.set_cookie('language', language)
+    return response
 
 
 def add(request, kind):
-    language = request.session.get('language')
-    if not language:
-        request.session['language'] = 'ru'
-
     if request.user.is_staff:
         p_categories = ProductCategory.objects.all()
         s_categories = ServiceCategory.objects.all()
+
+        language = request.COOKIES.get('language')
+        if not language:
+            language = 'ru'
 
         if kind == 'products':
             form_type = ProductForm
@@ -145,7 +155,9 @@ def add(request, kind):
             form_type = ServiceCategoryForm
         else:
             context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories}
-            return render(request, 'add_choose.html', context)
+            response = render(request, 'add_choose.html', context)
+            response.set_cookie('language', language)
+            return response
 
         if request.method == "POST":
             f = form_type(request.POST, request.FILES)
@@ -155,19 +167,23 @@ def add(request, kind):
                 return HttpResponseRedirect(reverse('main:all', args = (kind,)))
             else:
                 context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'kind' : kind, 'form' : f}
-                return render(request, 'add.html', context)
+                response = render(request, 'add.html', context)
+                response.set_cookie('language', language)
+                return response
         else:
             f = form_type()
             context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'kind' : kind, 'form' : f}
-            return render(request, 'add.html', context)
+            response = render(request, 'add.html', context)
+            response.set_cookie('language', language)
+            return response
     else:
         return HttpResponseNotFound()
 
 
 def edit(request, kind, object_id):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     if request.user.is_staff:
         p_categories = ProductCategory.objects.all()
@@ -203,19 +219,23 @@ def edit(request, kind, object_id):
                     return HttpResponseRedirect(reverse('main:all', args = (kind,)))
             else:
                 context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'object_id' : object_id, 'kind' : kind, 'form' : f}
-                return render(request, 'add.html', context)
+                response = render(request, 'add.html', context)
+                response.set_cookie('language', language)
+                return response
         else:
             f = form_type(instance = object)
             context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'object_id' : object_id, 'kind' : kind, 'form' : f}
-            return render(request, 'add.html', context)
+            response = render(request, 'add.html', context)
+            response.set_cookie('language', language)
+            return response
     else:
         return HttpResponseNotFound()
 
 
 def delete(request, kind, object_id):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     if request.user.is_staff:
         if kind == 'products':
@@ -233,8 +253,9 @@ def delete(request, kind, object_id):
         else:
             return HttpResponseNotFound()
 
-        if object.image:
-            object.image.delete()
+        if kind == 'products' or kind == 'services':
+            if object.image:
+                object.image.delete()
         object.delete()
 
         return HttpResponseRedirect(reverse('main:all', args = (kind,)))
@@ -255,9 +276,9 @@ def telegram_bot_sendtext(bot_message):
 
 
 def message_seller(request):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     if request.user.is_authenticated:
         if request.user.client.phone != Null:
@@ -268,35 +289,10 @@ def message_seller(request):
         return HttpResponseRedirect(reverse('main:login', args = ()))
 
 
-def phone(request):
-    language = request.session.get('language')
-    if not language:
-        request.session['language'] = 'ru'
-
-    p_categories = ProductCategory.objects.all()
-    s_categories = ServiceCategory.objects.all()
-
-    if request.method == "POST":
-        pf = PhoneForm(request.POST)
-        if pf.is_valid():
-            pf = pf.save(commit = False)
-            pf.save()
-            #Добавить шаблоны и бота
-            #Модель Visits, в moderation
-            return HttpResponseRedirect(request.META['HTTP_REFERER'])
-        else:
-            context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'form' : pf}
-            return render(request, 'phone_add.html', context)
-    else:
-        pf = PhoneForm()
-        context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'form' : pf}
-        return render(request, 'phone_add.html', context)
-
-
 def moderation(request):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     if request.user.is_staff:
         p_categories = ProductCategory.objects.all()
@@ -304,15 +300,17 @@ def moderation(request):
         views = Ip.objects.filter(year = str(datetime.datetime.now().year), month = str(datetime.datetime.now().month)).count()
 
         context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'views' : views}
-        return render(request, 'moderation.html', context)
+        response = render(request, 'moderation.html', context)
+        response.set_cookie('language', language)
+        return response
     else:
         return HttpResponseNotFound()
 
 
 def search_input(request):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     p_categories = ProductCategory.objects.all()
     s_categories = ServiceCategory.objects.all()
@@ -324,17 +322,21 @@ def search_input(request):
             return HttpResponseRedirect(reverse('main:search_result', args = (sf.text,)))
         else:
             context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'form' : sf}
-            return render(request, 'search_input.html', context)
+            response = render(request, 'search_input.html', context)
+            response.set_cookie('language', language)
+            return response
     else:
         sf = SearchForm()
         context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'form': sf}
-        return render(request, 'search_input.html', context)
+        response = render(request, 'search_input.html', context)
+        response.set_cookie('language', language)
+        return response
 
 
 def search_result(request, text):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     p_categories = ProductCategory.objects.all()
     s_categories = ServiceCategory.objects.all()
@@ -343,22 +345,23 @@ def search_result(request, text):
     services = Service.objects.filter(name__icontains = text)
 
     context = {'language' : language, 'p_categories' : p_categories, 's_categories' : s_categories, 'products' : products, 'services' : services}
-    return render(request, 'search_result.html', context)
+    response = render(request, 'search_result.html', context)
+    response.set_cookie('language', language)
+    return response
 
 
 def language_change(request, new_language):
-    language = request.session.get('language')
-    if language:
-        if new_language == 'kz' or new_language == 'ru':
-            request.session['language'] = new_language
+    response = redirect(request.META['HTTP_REFERER'])
+    if new_language == 'kz' or new_language == 'ru':
+        response.set_cookie('language', new_language)
 
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    return response
 
 
 def user_login(request):
-    language = request.session.get('language')
+    language = request.COOKIES.get('language')
     if not language:
-        request.session['language'] = 'ru'
+        language = 'ru'
 
     if request.method == 'POST':
         lf = LoginForm(request.POST)
@@ -375,8 +378,12 @@ def user_login(request):
                 return HttpResponse('Некорректные данные')
         else:
             context = {'language' : language, 'form' : lf}
-            return render(request, 'login.html', context)
+            response = render(request, 'login.html', context)
+            response.set_cookie('language', language)
+            return response
     else:
         lf = LoginForm()
         context = {'language' : language, 'form' : lf}
-        return render(request, 'login.html', context)
+        response = render(request, 'login.html', context)
+        response.set_cookie('language', language)
+        return response

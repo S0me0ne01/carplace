@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-#x+4!46=v3x9sydq^@b6o@%gjqeu201pk=udezgwi&#$78(^8h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['77.240.38.35', 'localhost']
 
 
 # Application definition
@@ -114,15 +114,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
 
 TEMPLATE_DIRS = (
     os.path.join(SETTINGS_PATH, 'templates'),
@@ -137,6 +134,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 THUMBNAIL_ALIASES = {
     '': {
-        'main': {'size': (1200, 675), 'crop': 'smart', 'upscale': True},
+        'main': {'size': (1200, 1200), 'crop': 'smart', 'upscale': True},
     },
 }

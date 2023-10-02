@@ -79,7 +79,11 @@
 
       <!-- CATEGORIES -->
       {% elif kind == 'p_categories' or kind == 's_categories' %}
+      {% if language == 'kz' %}
+      <h1 class="display-4 font-weight-normal text-center">Тауарлар санаттары</h1>
+      {% else %}
       <h1 class="display-4 font-weight-normal text-center">Категории товаров</h1>
+      {% endif %}
       <hr/><br/>
 
       {% for category in p_categories %}
@@ -100,7 +104,11 @@
       {% endfor %}
       <hr/>
 
+      {% if language == 'kz' %}
+      <h1 class="display-4 font-weight-normal text-center">Қызмет түрлері</h1>
+      {% else %}
       <h1 class="display-4 font-weight-normal text-center">Виды услуг</h1>
+      {% endif %}
       <hr/><br/>
       {% for category in s_categories %}
       <div class="col">

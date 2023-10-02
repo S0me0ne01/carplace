@@ -18,7 +18,6 @@ class Offer(models.Model):
     name_kz = models.CharField(max_length = 100, null = True, blank = True)
     description = models.CharField(max_length = 1000, null = True, blank = True)
     description_kz = models.CharField(max_length = 1000, null = True, blank = True)
-    image = models.ImageField(verbose_name = 'Изображение', null = True)
     price = models.PositiveIntegerField()
     views = models.PositiveIntegerField(default = 0)
 
@@ -47,6 +46,7 @@ class Service(Offer):
 class Category(models.Model):
     name = models.CharField(max_length = 100)
     name_kz = models.CharField(max_length = 100, null = True, blank = True)
+    image = models.ImageField(verbose_name = 'Изображение', null = True)
 
     class Meta:
         abstract = True
@@ -64,7 +64,7 @@ class ServiceCategory(Category):
 
 class Client(models.Model):
     user = models.OneToOneField(User, related_name = 'client', on_delete = models.CASCADE)
-    
+
 @receiver(post_save, sender=User)
 def user_create(sender, instance, created, **kwargs):
 	if created:
