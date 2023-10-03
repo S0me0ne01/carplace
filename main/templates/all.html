@@ -35,10 +35,12 @@
         <div class="col-lg-4 col-md-12 mb-4">
           <div class="card">
             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-              <img src="{{ object.image|thumbnail_url:'main' }}" class="img-fluid" />
+              {% if object.category.image %}
+              <img src="{{ object.category.image|thumbnail_url:'main' }}" class="img-fluid" />
               <a href="{% url 'main:detail' kind object.pk %}">
                 <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
               </a>
+              {% endif %}
             </div>
             <div class="card-body">
               {% if language == 'kz' and object.name_kz and object.description_kz and object.category.name_kz %}
@@ -87,8 +89,11 @@
       <hr/><br/>
 
       {% for category in p_categories %}
-      <div class="col">
+      <div class="col-lg-4 col-md-12 mb-4">
         <div class="card mb-4 rounded-3 shadow-sm">
+          <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+            <img src="{{ category.image|thumbnail_url:'main' }}" class="img-fluid" />
+          </div>
           <div class="card-header py-3">
             {% if language == 'kz' %}
             <h4 class="my-0 fw-normal text-center">{{ category.name_kz }}</h4>
@@ -98,6 +103,10 @@
           </div>
           <div class="card-body">
             <a href="{% url 'main:by_category' 'products' category.pk %}" class="w-100 btn btn-lg btn-outline-primary">Посмотреть товары</a>
+            {% if request.user.is_staff %}
+            <a href="{% url 'main:edit' 's_categories' category.pk %}" class="w-100 btn btn-lg btn-outline-primary" style="margin-top: 10px;">Изменить</a>
+            <a href="{% url 'main:delete' 'p_categories' category.pk %}" class="w-100 btn btn-lg btn-outline-primary" style="margin-top: 10px;">Удалить</a>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -111,8 +120,11 @@
       {% endif %}
       <hr/><br/>
       {% for category in s_categories %}
-      <div class="col">
+      <div class="col-lg-4 col-md-12 mb-4">
         <div class="card mb-4 rounded-3 shadow-sm">
+          <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+            <img src="{{ category.image|thumbnail_url:'main' }}" class="img-fluid" />
+          </div>
           <div class="card-header py-3">
             {% if language == 'kz' %}
             <h4 class="my-0 fw-normal text-center">{{ category.name_kz }}</h4>
@@ -122,6 +134,10 @@
           </div>
           <div class="card-body">
             <a href="{% url 'main:by_category' 'services' category.pk %}" class="w-100 btn btn-lg btn-outline-primary">Посмотреть услуги</a>
+            {% if request.user.is_staff %}
+            <a href="{% url 'main:edit' 's_categories' category.pk %}" class="w-100 btn btn-lg btn-outline-primary" style="margin-top: 10px;">Изменить</a>
+            <a href="{% url 'main:delete' 's_categories' category.pk %}" class="w-100 btn btn-lg btn-outline-primary" style="margin-top: 10px;">Удалить</a>
+            {% endif %}
           </div>
         </div>
       </div>

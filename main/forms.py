@@ -48,13 +48,12 @@ class ServiceForm(forms.ModelForm):
 	name_kz = forms.CharField(label = 'Название на казахском')
 	description = forms.CharField(label = 'Описание', widget=forms.widgets.Textarea())
 	description_kz = forms.CharField(label = 'Описание на казахском', widget=forms.widgets.Textarea())
-	image = forms.ImageField(label = 'Изображение', validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'jpeg'))], error_messages={'invalid_extension' : 'Этот формат не поддерживается', 'required' : ''}, required = True)
 	price = forms.IntegerField(label = 'Цена')
 	duration = forms.IntegerField(label = 'Время выполнения (мин)')
 
 	class Meta:
 		model = Service
-		fields = ('category', 'name', 'name_kz', 'description', 'description_kz', 'image', 'price', 'duration',)
+		fields = ('category', 'name', 'name_kz', 'description', 'description_kz', 'price', 'duration',)
 
 
 class PhoneForm(forms.ModelForm):

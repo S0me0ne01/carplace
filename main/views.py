@@ -246,47 +246,22 @@ def delete(request, kind, object_id):
 
         elif kind == 'p_categories':
             object = get_object_or_404(ProductCategory, id = object_id)
+            if object.image:
+                object.image.delete()
 
         elif kind == 's_categories':
             object = get_object_or_404(ServiceCategory, id = object_id)
-
+            if object.image:
+                object.image.delete()
         else:
             return HttpResponseNotFound()
 
-        if kind == 'products' or kind == 'services':
-            if object.image:
-                object.image.delete()
-        object.delete()
+        if kind == 'products' or kind == 'services' or kind == 'p_categories' or kind == 's_categories':
+            object.delete()
 
         return HttpResponseRedirect(reverse('main:all', args = (kind,)))
     else:
         return HttpResponseNotFound()
-
-
-def telegram_bot_sendtext(bot_message):
-
-
-    bot = telegram.Bot(token='6186542224:AAHBxglHL_dVT1hrvZKuIJGm8c2OrtlagQc')
-    bot.send_message(chat_id='1813204503', text=bot_message)
-    send_text = 'https://api.telegram.org/bot' + '6186542224:AAHBxglHL_dVT1hrvZKuIJGm8c2OrtlagQc' + '/sendMessage?chat_id=' + '-1813204503' + '&parse_mode=Markdown&text=' + bot_message
-
-    response = requests.get(send_text)
-
-    return response.json()
-
-
-def message_seller(request):
-    language = request.COOKIES.get('language')
-    if not language:
-        language = 'ru'
-
-    if request.user.is_authenticated:
-        if request.user.client.phone != Null:
-            baskets = Basket.objects.filter(client = request.user.client)
-        else:
-            return HttpResponseRedirect(reverse('main:login', args = ()))
-    else:
-        return HttpResponseRedirect(reverse('main:login', args = ()))
 
 
 def moderation(request):

@@ -31,10 +31,12 @@
         <div class="col-lg-4 col-md-12 mb-4">
           <div class="card">
             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-              <img src="{{ product.image|thumbnail_url:'main' }}" class="img-fluid" />
+              {% if product.category.image %}
+              <img src="{{ product.category.image|thumbnail_url:'main' }}" class="img-fluid" />
               <a href="{% url 'main:detail' 'products' product.pk %}">
                 <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
               </a>
+              {% endif %}
             </div>
             <div class="card-body">
               {% if language == 'kz' and product.name_kz and product.description_kz %}
@@ -91,10 +93,12 @@
         <div class="col-lg-4 col-md-12 mb-4">
           <div class="card">
             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-              <img src="{{ service.image|thumbnail_url:'main' }}" class="img-fluid" />
+              {% if service.category.image %}
+              <img src="{{ service.category.image|thumbnail_url:'main' }}" class="img-fluid" />
               <a href="{% url 'main:detail' 'services' service.pk %}">
                 <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
               </a>
+              {% endif %}
             </div>
             <div class="card-body">
               {% if language == 'kz' and service.name_kz and service.description_kz %}
